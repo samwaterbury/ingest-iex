@@ -1,0 +1,104 @@
+[
+    {
+        "key": "DJIA",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "DIA"
+    },
+    {
+        "key": "DJT",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "IYT"
+    },
+    {
+        "key": "DJU",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "UPW"
+    },
+    {
+        "key": "DWCF",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "SWTSX"
+    },
+    {
+        "key": "B400",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "BFOR"
+    },
+    {
+        "key": "SPX",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "SPY"
+    },
+    {
+        "key": "OEX",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "OEF"
+    },
+    {
+        "key": "MID",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "IJH"
+    },
+    {
+        "key": "SML",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "IJR"
+    },
+    {
+        "key": "SP1500",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "ITOT"
+    },
+    {
+        "key": "COMP",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "ONEQ"
+    },
+    {
+        "key": "NDX",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "QQQ"
+    },
+    {
+        "key": "NBI",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "IBB"
+    },
+    {
+        "key": "NYA",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "XNTK"
+    },
+    {
+        "key": "RUI",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "AMCA"
+    },
+    {
+        "key": "RUT",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "IWM"
+    },
+    {
+        "key": "RUA",
+        "api": "charts",
+        "frequency": "1D",
+        "symbol": "IWV"
+    }
+]
