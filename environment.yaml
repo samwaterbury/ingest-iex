@@ -1,0 +1,13 @@
+name: iex
+dependencies:
+  - black
+  - ipykernel
+  - jupyter
+  - jupyterlab
+  - nb_conda
+  - pip
+  - pylint
+  - python=3.8
+  - pip:
+    - boto3
+    - --requirement requirements.txt

@@ -1,0 +1,18 @@
+# System files
+*.DS_Store
+
+# Compiled Python files
+__pycache__/
+
+# Editor files
+.vscode/
+
+# Serverless framework
+.serverless
+
+# Node
+node_modules/
+
+# Secrets
+*.env
+!example.env

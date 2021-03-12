@@ -1,0 +1,62 @@
+service: iex-ingestion
+
+frameworkVersion: "2"
+
+provider:
+  name: aws
+  runtime: python3.8
+  stage: dev
+  region: us-west-2
+  lambdaHashingVersion: "20201221"
+  eventBridge:
+    useCloudFormation: true
+  environment:
+    IEX_S3_BUCKET: ${env:IEX_S3_BUCKET}
+    IEX_S3_PREFIX: ${env:IEX_S3_PREFIX}
+    IEX_ENDPOINT: ${env:IEX_ENDPOINT}
+    IEX_TOKEN: ${env:IEX_TOKEN}
+    IEX_ROLE: ${env:IEX_ROLE}
+
+plugins:
+  - serverless-python-requirements
+  - serverless-s3-deploy
+
+custom:
+  assets:
+    auto: true
+    targets:
+      - bucket: ${env:IEX_S3_BUCKET}
+        prefix: ${env:IEX_S3_PREFIX}
+        files:
+          - source: ./
+            globs: "definitions.json"
+  pythonRequirements:
+    dockerizePip: non-linux
+    usePoetry: false
+  role:
+    !Sub "arn:aws:iam::${AWS::AccountId}:role/${env:IEX_ROLE}"
+
+package:
+  exclude:
+    - ./**
+  include:
+    - src/**.py
+
+functions:
+  iex_trigger:
+    handler: src/trigger.handler
+    name: iex-trigger
+    role: ${self:custom.role}
+    events:
+      - eventBridge:
+          schedule: rate(15 minutes)
+  charts_ingestion:
+    handler: src/charts.handler
+    name: iex-charts-ingestion
+    role: ${self:custom.role}
+    events:
+      - eventBridge:
+          eventBus: iex-ingestion
+          pattern:
+            source:
+              - ingestion.iex.trigger
