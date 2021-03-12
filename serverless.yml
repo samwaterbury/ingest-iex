@@ -28,7 +28,7 @@ custom:
       - bucket: ${env:IEX_S3_BUCKET}
         prefix: ${env:IEX_S3_PREFIX}
         files:
-          - source: ./
+          - source: ./resources/
             globs: "definitions.json"
   pythonRequirements:
     dockerizePip: non-linux
