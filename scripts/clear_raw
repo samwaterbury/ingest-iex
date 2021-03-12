@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#
+# Delete all data matching "s3://${IEX_S3_BUCKET}/${IEX_S3_PREFIX}raw/*.json".
+
+# Show the destruction that will be wrought
+echo "The following S3 operations will be performed:"
+
+aws s3 rm "s3://${IEX_S3_BUCKET}/${IEX_S3_PREFIX}raw/" \
+    --dryrun \
+    --recursive \
+    --exclude "*" \
+    --include "*.json"
+
+# Ask for input
+read -p "Type \"yes\" to proceed: " -n 1 -r
+
+# Delete the objects
+if [ $REPLY = "yes" ]; then
+    aws s3 rm "s3://${IEX_S3_BUCKET}/${IEX_S3_PREFIX}raw/" \
+        --recursive \
+        --exclude "*" \
+        --include "*.json"
+fi
+
+echo

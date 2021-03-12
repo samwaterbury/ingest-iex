@@ -40,6 +40,12 @@ This will deploy all resources required by the service. To undeploy, run:
 serverless remove
 ```
 
+## Scripts
+
+The `scripts/` directory contains helper scripts for various infrequent operations:
+
+- `./scripts/clear_raw` will clear all "raw" JSON files in S3.
+
 ## Development
 
 For local development and testing, you can create a conda environment to mimic the Lambda runtime:
