@@ -33,13 +33,14 @@ def determine_recency(data_key: str) -> pd.Timedelta:
 
     regex = re.compile(r"^\d{14}\.json$")
     latest_timestamp = None
-    for item in reversed(data_objects["Contents"]):
-        filename = item["Key"][len(data_prefix) :]
-        if regex.match(filename):
-            filename = filename[:-5]
-            naive_timestamp = datetime.strptime(filename, "%Y%m%d%H%M%S")
-            latest_timestamp = pd.Timestamp(naive_timestamp, tz="UTC")
-            break
+    if data_objects["KeyCount"] > 0:
+        for item in reversed(data_objects["Contents"]):
+            filename = item["Key"][len(data_prefix) :]
+            if regex.match(filename):
+                filename = filename[:-5]
+                naive_timestamp = datetime.strptime(filename, "%Y%m%d%H%M%S")
+                latest_timestamp = pd.Timestamp(naive_timestamp, tz="UTC")
+                break
 
     logging.info(
         "Found latest timestamp '%s' for key '%s'.", latest_timestamp, data_key
