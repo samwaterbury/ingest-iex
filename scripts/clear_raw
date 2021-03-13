@@ -12,7 +12,7 @@ aws s3 rm "s3://${IEX_S3_BUCKET}/${IEX_S3_PREFIX}raw/" \
     --include "*.json"
 
 # Ask for input
-read -p "Type \"yes\" to proceed: " -n 1 -r
+read -p "Type \"yes\" to proceed: " -r
 
 # Delete the objects
 if [ $REPLY = "yes" ]; then
