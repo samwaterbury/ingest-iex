@@ -2,6 +2,12 @@
 
 Service to routinely query IEX Cloud for the latest data and store it in S3.
 
+## What is This?
+
+I built this service to continously retrieve financial data from an API and store it in S3. It turned out to be a fairly effective demonstration of building a robust ingestion pipeline using event-driven Lambda functions.
+
+The service is coordinated and deployed using the [Serverless Framework](https://github.com/serverless/serverless). This makes it easy to define the scheduling and chaining of Lambda functions in a declarative manner.
+
 ## Setup
 
 You need the [Serverless Framework](https://github.com/serverless/serverless) CLI installed to deploy this ingestion service. It's a good idea to install this globally:
