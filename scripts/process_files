@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+
+"""Process any raw files that have not already been processed."""
+
+import json
+import os
+from typing import Tuple
+
+import boto3
+
+IEX_S3_BUCKET = os.environ["IEX_S3_BUCKET"]
+IEX_S3_PREFIX = os.environ["IEX_S3_PREFIX"]
+
+s3_client = boto3.client("s3")
+lambda_client = boto3.client("lambda")
+
+
+def key_to_tuple(key: str) -> Tuple[str, str]:
+    """Split the S3 path for a raw file into a tuple of (key, timestamp)."""
+    return tuple(key.split(".")[0].split("/")[-2:])
+
+
+raw_file_results = s3_client.list_objects_v2(
+    Bucket=IEX_S3_BUCKET,
+    Prefix=os.path.join(IEX_S3_PREFIX, "raw") + "/",
+)
+raw_files = [key_to_tuple(item["Key"]) for item in raw_file_results.get("Contents", [])]
+
+processed_file_results = s3_client.list_objects_v2(
+    Bucket=IEX_S3_BUCKET,
+    Prefix=os.path.join(IEX_S3_PREFIX, "processed") + "/",
+)
+processed_files = [
+    key_to_tuple(item["Key"]) for item in processed_file_results.get("Contents", [])
+]
+
+for data_key, ingestion_timestamp in set(raw_files) - set(processed_files):
+    payload = {
+        "Records": [
+            {
+                "s3": {
+                    "object": {
+                        "key": f"upstream/iex/raw/chart/{data_key}/{ingestion_timestamp}.json",
+                    },
+                },
+            }
+        ]
+    }
+
+    lambda_client.invoke(
+        FunctionName="iex-chart-processing",
+        InvocationType="Event",
+        Payload=bytes(json.dumps(payload), encoding="utf-8"),
+    )

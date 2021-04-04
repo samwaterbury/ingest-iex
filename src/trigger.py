@@ -25,7 +25,7 @@ def determine_recency(data_key: str) -> pd.Timedelta:
     """
     s3_client = boto3.client("s3")
 
-    data_prefix = os.path.join(IEX_S3_PREFIX, "raw", data_key.lower()) + "/"
+    data_prefix = os.path.join(IEX_S3_PREFIX, "raw", "chart", data_key.lower()) + "/"
     data_objects = s3_client.list_objects_v2(
         Bucket=IEX_S3_BUCKET,
         Prefix=data_prefix,

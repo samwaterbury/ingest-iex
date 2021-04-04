@@ -6,6 +6,7 @@ import os
 from datetime import datetime
 
 import boto3
+import pandas as pd
 import requests
 from dateutil.relativedelta import relativedelta
 
@@ -13,19 +14,25 @@ from src.utils import IEX_ENDPOINT, IEX_S3_BUCKET, IEX_S3_PREFIX, IEX_TOKEN
 
 logging.getLogger().setLevel(logging.INFO)
 
+
+def now() -> datetime:
+    """Get current, timezone-aware datetime."""
+    return pd.Timestamp.now(tz="UTC").to_pydatetime()
+
+
 CHART_RANGE_AVAILABLE_VALUES = {
-    "5d": lambda: datetime.now() - relativedelta(days=5) + relativedelta(days=1),
-    "1m": lambda: datetime.now() - relativedelta(months=1) + relativedelta(days=1),
-    "3m": lambda: datetime.now() - relativedelta(months=3) + relativedelta(days=1),
-    "6m": lambda: datetime.now() - relativedelta(months=6) + relativedelta(days=1),
-    "ytd": lambda: datetime.now().replace(
+    "5d": lambda: now() - relativedelta(days=5) + relativedelta(days=1),
+    "1m": lambda: now() - relativedelta(months=1) + relativedelta(days=1),
+    "3m": lambda: now() - relativedelta(months=3) + relativedelta(days=1),
+    "6m": lambda: now() - relativedelta(months=6) + relativedelta(days=1),
+    "ytd": lambda: now().replace(
         month=1, day=1, hour=0, minute=0, second=0, microsecond=0
     )
     + relativedelta(days=1),
-    "1y": lambda: datetime.now() - relativedelta(years=1) + relativedelta(days=1),
-    "2y": lambda: datetime.now() - relativedelta(years=2) + relativedelta(days=1),
-    "5y": lambda: datetime.now() - relativedelta(years=5) + relativedelta(days=1),
-    "max": lambda: datetime.now() - relativedelta(years=15) + relativedelta(days=1),
+    "1y": lambda: now() - relativedelta(years=1) + relativedelta(days=1),
+    "2y": lambda: now() - relativedelta(years=2) + relativedelta(days=1),
+    "5y": lambda: now() - relativedelta(years=5) + relativedelta(days=1),
+    "max": lambda: now() - relativedelta(years=15) + relativedelta(days=1),
 }
 
 
@@ -92,7 +99,7 @@ def handler(event, _context):
     detail = event["detail"]
     definition_key = detail["key"].lower()
     symbol = detail["symbol"]
-    start = detail["start"]
+    start = pd.Timestamp(detail["start"]).to_pydatetime()
 
     chart_range = determine_chart_range(start)
     data = get_chart(symbol, chart_range)
@@ -102,5 +109,7 @@ def handler(event, _context):
     s3_client.put_object(
         Body=bytes(json.dumps(data), encoding="utf-8"),
         Bucket=IEX_S3_BUCKET,
-        Key=os.path.join(IEX_S3_PREFIX, f"raw/{definition_key}/{file_timestamp}.json"),
+        Key=os.path.join(
+            IEX_S3_PREFIX, f"raw/chart/{definition_key}/{file_timestamp}.json"
+        ),
     )

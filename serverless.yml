@@ -1,6 +1,7 @@
 service: iex-ingestion
 
 frameworkVersion: "2"
+configValidationMode: warn
 
 provider:
   name: aws
@@ -37,10 +38,10 @@ custom:
     !Sub "arn:aws:iam::${AWS::AccountId}:role/${env:IEX_ROLE}"
 
 package:
-  exclude:
-    - ./**
-  include:
-    - src/**.py
+  patterns:
+    - '!./**'
+    - 'src/**.py'
+    - 'src/*/**.py'
 
 functions:
   iex_trigger:
@@ -50,9 +51,9 @@ functions:
     events:
       - eventBridge:
           schedule: rate(15 minutes)
-  charts_ingestion:
-    handler: src/charts.handler
-    name: iex-charts-ingestion
+  chart_raw_ingestion:
+    handler: src/chart/raw.handler
+    name: iex-chart-raw-ingestion
     role: ${self:custom.role}
     events:
       - eventBridge:
@@ -60,3 +61,15 @@ functions:
           pattern:
             source:
               - ingestion.iex.trigger
+  chart_processing:
+    handler: src/chart/process.handler
+    name: iex-chart-processing
+    role: ${self:custom.role}
+    events:
+      - s3:
+          bucket: ${env:IEX_S3_BUCKET}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: "${env:IEX_S3_PREFIX}raw/chart/"
+            - suffix: .json
+          existing: true

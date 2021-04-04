@@ -45,6 +45,8 @@ serverless remove
 The `scripts/` directory contains helper scripts for various infrequent operations:
 
 - `./scripts/clear_raw` will clear all "raw" JSON files in S3.
+- `./scripts/process_files` will find and process any "raw" JSON files without
+  corresponding Parquet files.
 
 ## Development
 
@@ -70,17 +72,14 @@ s3://
     └── {IEX_S3_PREFIX}
             ├── definitions.json
             ├── raw/
-            │   ├── key_1/
-            │   ├── ...
-            │   └── key_n/
+            │   └── chart/
+            │       ├── key_1/
+            │       ├── ...
+            │       └── key_n/
             └── processed/
-                ├── key_1.parquet
+                ├── key_1/
                 ├── ...
-                └── key_n.parquet
+                └── key_n/
 ```
 
-Each `key_n/` folder contains the raw API responses related to that key in `definitions.json` for that stage. The raw responses are stored as files named `{YYYYMMDDhhmmss}.csv` based on the time of the request. The `key_n.parquet` files contain the processed data with the following fields:
-
-- `key`
-- `timestamp`
-- `percent_change`
+Each `key_n/` folder contains API responses related to that key in `definitions.json` for that stage. The raw responses are stored as files named `{YYYYMMDDhhmmss}.csv` based on the time of the request. The processed responses are stored as `{YYYYMMDDhhmmss}.parquet` files corresponding to the timestamps of the original raw files.
